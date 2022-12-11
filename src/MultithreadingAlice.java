@@ -8,7 +8,7 @@ public class MultithreadingAlice implements Runnable{
         }
         catch (Exception e) {
             // Throwing an exception
-            System.out.println("Exception is caught");
+            System.out.println("Exception Alice is caught " + e);
         }
     }
 }
