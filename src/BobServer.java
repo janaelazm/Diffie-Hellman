@@ -28,7 +28,7 @@ public class BobServer extends DHE{
         String str = br.readLine();
 
         String decodedA = decodeWord(str, key);
-        System.out.println("Message from Alice: " + decodedA);
+        System.out.println("Bob get fake message from Alice: " + decodedA);
         String encodedMsg = encodeWord(msg, key);
         OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream());
         PrintWriter out = new PrintWriter(osw);

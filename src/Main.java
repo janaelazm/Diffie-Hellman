@@ -2,8 +2,6 @@ import java.math.BigInteger;
 
 public class Main {
 
-    static AliceClient alice = new AliceClient();
-    static BobServer bob = new BobServer();
     static int port = 9999;
     static int port2 = 9998;
     static DHE dhe = new DHE();
@@ -11,6 +9,7 @@ public class Main {
     static BigInteger n = BigInteger.valueOf(103);
     static BigInteger resAlice;
     static BigInteger resBob;
+    static BigInteger resEve;
 
 
     public static void main(String[] args) throws Exception {
@@ -18,25 +17,29 @@ public class Main {
         MultithreadingBob newB = new MultithreadingBob();
         Thread objectBob = new Thread(newB);
         objectBob.start();
-        MultithreadingAlice newA = new MultithreadingAlice();
-        Thread objectAlice = new Thread(newA);
-        objectAlice.start();
+
+        MultithreadingEveAliceRole newE = new MultithreadingEveAliceRole();
+        Thread objectEve = new Thread(newE);
+        objectEve.start();
+
+
         objectBob.join();
-        objectAlice.join();
+        objectEve.join();
+
 
          resBob = newB.getValue();
-        System.out.println(resBob);
+            System.out.println(resBob);
 
-         resAlice = newA.getValue();
-       System.out.println(resAlice);
+         resEve = newE.getValueAlice();
+       System.out.println(resEve);
         objectBob.stop();
-        objectAlice.stop();
-        if(resAlice.equals(resBob)) {
+        objectEve.stop();
+        if(resEve.equals(resBob)) {
 
             Thread messageBob = new Thread(new ThreadMessageBob());
             messageBob.start();
-            Thread messageAlice = new Thread(new ThreadMessageAlice());
-            messageAlice.start();
+            Thread messageEve = new Thread(new ThreadMessageEveAliceRole());
+            messageEve.start();
 
         }
 
