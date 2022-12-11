@@ -2,9 +2,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
 import java.math.BigInteger;
-import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -53,16 +51,6 @@ public class DHE{
     }
 
     //for subclasses to calculate their public keys
-    protected BigInteger calculateModPow(BigInteger g, BigInteger expo, BigInteger prime){
-        return g.modPow(expo, prime);
-    }
-
-
-
-    public String decodeMessage(String message, String secretKey) throws Exception {
-        return decodeWord(message, secretKey);
-    }
-
 
     public static String encodeWord(String word, String key) throws  Exception {
         Security.addProvider(new BouncyCastleProvider());
@@ -79,11 +67,10 @@ public class DHE{
         }
         SecretKeySpec secretKey = new SecretKeySpec(secretWordByte, "AES");
         Cipher var4 = Cipher.getInstance("AES/ECB/NoPadding", "BC");
-        System.out.println("input text : " + Utils.toHex(byteArrOfWord));
         byte[] var5 = new byte[byteArrOfWord.length];
         var4.init(1, secretKey);
         int var6 = var4.update(byteArrOfWord, 0, byteArrOfWord.length, var5, 0);
-      //  var6 += var4.doFinal(var5, var6);
+        var6 += var4.doFinal(var5, var6);
         return Utils.toHex(var5);
     }
 
@@ -109,27 +96,11 @@ public class DHE{
         byte[] secretWordByte = keySHA256.digest(key.getBytes(charset));
         SecretKeySpec secretKey = new SecretKeySpec(secretWordByte, "AES");
         var4.init(2, secretKey);
+
+        System.out.println(var5.length);
         int var8 = var4.update(var5, 0, var5.length, var7, 0);
-    //    var8 += var4.doFinal(var7, var8);
-       // System.out.println(new String(var7, charset));
-        return Utils.toHex(var7);
-    }
-
-
-        public void sendMessage(String message, OutputStreamWriter osw) throws IOException {
-            //convert data to stream format, parameter-to where we send info, in this case we sent to output port of a socket
-            //send the data
-            PrintWriter out = new PrintWriter(osw);
-            out.println(message);
-            osw.flush();
-        }
-
-    public BigInteger receiveMessage(Socket socket) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        String keyToShareBob= br.readLine();
-        BigInteger b = new BigInteger(keyToShareBob);
-        return b;
-
+        var8 += var4.doFinal(var7, var8);
+        return new String(var7, charset);
     }
 
 }
